@@ -5,7 +5,13 @@ def confirm(id):
     print("")
     for i, origin in enumerate( outOrigins ):
         print( str(i)+" - "+origin )
-    mappedId = int(input("What origin you want to use for "+id+"?"))
+    while True:
+        try:
+            mappedId = int(input("What origin you want to use for "+id+"?"))
+            if mappedId >= 0 and mappedId < len(outOrigins):
+                break
+        except ValueError:
+            pass
     originsMap[id] = outOrigins[mappedId]
     return
 
