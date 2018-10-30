@@ -15,8 +15,8 @@ parser.add_argument('src', metavar='src', type=str,
                     help='source CF distribution')
 parser.add_argument('target', metavar='target', type=str,
                     help='target CF distribution')                    
-#parser.add_argument('--with-error-pages', action="store_true", dest="withErrorPages",
-#                    help='copy error pages setup')
+parser.add_argument('--with-error-pages', action="store_true", dest="withErrorPages",
+                    help='copy error pages setup')
 parser.add_argument( '-o', dest="output", default=False, help="output the configuration to a file" )
 parser.add_argument( '--deploy', action='store_true', dest="deploy", default=False, help="Deploy the changes to the target CloudFront distribution? It requires output file to be defined in -o option." )
 args = parser.parse_args()
@@ -26,7 +26,6 @@ if args.deploy and not args.output:
     sys.exit(1)
 
 srcDistribution = args.src
-cfSrcFileName = "cf_src.json"
 targetDistribution = args.target
 
 # load the src distribution config from AWS
@@ -37,6 +36,11 @@ cfSrc = json.loads(cfSrcStr)['DistributionConfig'].copy()
 cfOutStr = os.popen("aws cloudfront get-distribution-config --id "+targetDistribution).read()
 cfOutOrig = json.loads(cfOutStr)
 cfOut = cfOutOrig['DistributionConfig'].copy()
+
+
+# copy error pages setup
+if args.withErrorPages:
+    cfOut['CustomErrorResponses'] = cfSrc['CustomErrorResponses']
 
 # copy behaviors
 cfOut['CacheBehaviors'] = cfSrc['CacheBehaviors'].copy()
