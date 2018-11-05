@@ -18,7 +18,7 @@ def confirm(id):
 # COMMAND LINE OPTIONS
 parser = argparse.ArgumentParser(description='Copy CloudFront behaviors between distributions')
 parser.add_argument('src', metavar='src', type=str,
-                    help='source CF distribution')
+                    help='source CF distribution: id or file://path/to/config.json')
 parser.add_argument('target', metavar='target', type=str,
                     help='target CF distribution')                    
 parser.add_argument('--with-error-pages', action="store_true", dest="withErrorPages",
@@ -35,8 +35,21 @@ srcDistribution = args.src
 targetDistribution = args.target
 
 # load the src distribution config from AWS
-cfSrcStr = os.popen("aws cloudfront get-distribution-config --id "+srcDistribution).read()
-cfSrc = json.loads(cfSrcStr)['DistributionConfig'].copy()
+if srcDistribution.startswith('file://'):
+    try:
+        cfSrcFileName = srcDistribution[7:]
+        cfSrcFileH = open(cfSrcFileName, "r")
+        cfSrc = json.load(cfSrcFileH)['DistributionConfig'].copy()
+        cfSrcFileH.close()
+    except OSError as e:
+        print("Cannot open file: "+cfSrcFileName)
+        sys.exit(2)
+    except LookupError as e:
+        print("Wrong format of the source file "+cfSrcFileName)
+        sys.exit(3)
+else:    
+    cfSrcStr = os.popen("aws cloudfront get-distribution-config --id "+srcDistribution).read()
+    cfSrc = json.loads(cfSrcStr)['DistributionConfig'].copy()
 
 # load targer distribution configuration
 cfOutStr = os.popen("aws cloudfront get-distribution-config --id "+targetDistribution).read()

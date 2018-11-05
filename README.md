@@ -10,12 +10,13 @@ More details: [read more...](https://docs.aws.amazon.com/cli/latest/userguide/in
 
 ## Usage
 ```bash
-usage: aws-cf-copy.py [-h] [--with-error-pages] [-o OUTPUT] [--deploy] src target
+usage: aws-cf-copy.py [-h] [--with-error-pages] [-o OUTPUT] [--deploy]
+                      src target
 
 Copy CloudFront behaviors between distributions
 
 positional arguments:
-  src                 source CF distribution
+  src                 source CF distribution: id or file://path/to/config.json
   target              target CF distribution
 
 optional arguments:
