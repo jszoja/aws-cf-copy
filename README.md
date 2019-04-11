@@ -1,5 +1,5 @@
 # aws-cf-copy
-It is simple tool, which automates the process of copying setup between two CloudFront distributions
+It is simple tool, which automates the process of copying setup/behaviors between two CloudFront distributions
 
 ## Requirements
 You need to install awscli and configure it, eg:
